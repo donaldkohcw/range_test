@@ -1,0 +1,3 @@
+key,type,encoding,value
+storage,namespace,,,
+restart_counter,data,i32,12234

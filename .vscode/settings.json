@@ -1,0 +1,11 @@
+{
+    "idf.espIdfPathWin": "C:\\Users\\DonaldK\\esp\\v5.3.2\\esp-idf",
+    "idf.toolsPathWin": "c:\\User\\DonaldK\\.espressif",
+    "idf.pythonInstallPath": "c:\\User\\DonaldK\\.espressif\\tools\\idf-python\\3.11.2\\python.exe",
+    "idf.customExtraVars": {
+        "IDF_TARGET": "esp32h2"
+    },
+    "idf.openOcdConfigs": [
+        "board/esp32h2-builtin.cfg"
+    ]
+}
