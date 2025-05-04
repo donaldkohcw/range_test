@@ -243,10 +243,10 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
     vTaskDelay(pdMS_TO_TICKS(1));
 
     // Register 2: Set HPRT, APRT, DIR_MODE and THRS fields in REG02
-    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_on) |
-              S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_on) |
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_off) |
+              S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_off) |
               S2GO_RADAR_BGT60LTR11_SET(REG02, DIR_MODE, dir_mode_2) |
-              S2GO_RADAR_BGT60LTR11_SET(REG02, THRS, det_thrs_112);
+              S2GO_RADAR_BGT60LTR11_SET(REG02, THRS, det_thrs_80);
     
             //   spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_on) |
             //   S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_on) |
@@ -304,7 +304,7 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
               S2GO_RADAR_BGT60LTR11_SET(REG07, MPA2SH_DLY, map_enable_to_sample_hold_delay_1000ns) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, VCO2PLL_DLY, vco_to_pll_delay_1000ns) |
               //S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_10us) |
-              S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_40us) |
+              S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_5us) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, DC_REP_RATE, duty_cycle_rep_500us);
     //printf("Register 7 value: 0x%X\r\n", spi_word);
     error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG07, spi_word);
