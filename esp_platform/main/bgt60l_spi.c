@@ -243,8 +243,8 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
     vTaskDelay(pdMS_TO_TICKS(1));
 
     // Register 2: Set HPRT, APRT, DIR_MODE and THRS fields in REG02
-    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_off) |
-              S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_off) |
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_on) |
+              S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_on) |
               S2GO_RADAR_BGT60LTR11_SET(REG02, DIR_MODE, dir_mode_2) |
               S2GO_RADAR_BGT60LTR11_SET(REG02, THRS, det_thrs_80);
     
@@ -283,7 +283,9 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
     vTaskDelay(pdMS_TO_TICKS(1));
 
     // Register 5: Set frequency in REG05_PLL_CFG2
-    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_25Ghz);
+    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_25Ghz);
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_1Ghz);
+
     //printf("Register 5 value: 0x%X\r\n", spi_word);
     error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG05_PLL_CFG2, spi_word);
     if(error != ESP_OK) return error;
@@ -323,7 +325,9 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
     spi_word = S2GO_RADAR_BGT60LTR11_SET(REG09_BB, CTRL_GAIN, baseband_PGA_gain_50dB) |
               S2GO_RADAR_BGT60LTR11_SET(REG09_BB, LPF_BW, low_pass_filter_10kHz) |
               S2GO_RADAR_BGT60LTR11_SET(REG09_BB, CLK_CHOP_SEL, clock_chop_freq_200kHz) |
-              S2GO_RADAR_BGT60LTR11_SET(REG09_BB, HP_RES, high_pass_filter_resistor_1Mohm);
+              //S2GO_RADAR_BGT60LTR11_SET(REG09_BB, HP_RES, high_pass_filter_resistor_1Mohm);
+              S2GO_RADAR_BGT60LTR11_SET(REG09_BB, HP_RES, high_pass_filter_resistor_4Mohm);
+
     //printf("Register 9 value: 0x%X\r\n", spi_word);
     error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG09_BB, spi_word);
     if(error != ESP_OK) return error;
@@ -331,7 +335,7 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
 
     // Register 10: Set hold time in REG10_HOLDTIME  
     //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_5min);
-    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_60_032sec);
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_1_024sec);
     //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_40_05sec);
   //  spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_512msec);
 
