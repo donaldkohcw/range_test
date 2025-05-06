@@ -192,10 +192,10 @@ typedef enum
 
 typedef enum
 {
-    duty_cycle_on_pulse_5us		= 0,
-    duty_cycle_on_pulse_10us	= 1,
-    duty_cycle_on_pulse_20us	= 2,
-    duty_cycle_on_pulse_40us	= 3
+    duty_cycle_on_pulse_5us		= 0, //5us
+    duty_cycle_on_pulse_10us	= 1, //10us
+    duty_cycle_on_pulse_20us	= 2, //3us
+    duty_cycle_on_pulse_40us	= 3  //4us
 } Reg07_duty_cycle_on_pulse_length_t;
 
 typedef enum

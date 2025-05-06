@@ -35,7 +35,7 @@ void nvs_init(void)
 void nvs_task(void *pvParameter)
 {
     while (1) {
-        read_nvs_data();
+        //read_nvs_data();
         vTaskDelay(5000 / portTICK_PERIOD_MS);
     }
 }

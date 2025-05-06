@@ -305,8 +305,8 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
               S2GO_RADAR_BGT60LTR11_SET(REG07, PD_EN, pd_off) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, MPA2SH_DLY, map_enable_to_sample_hold_delay_1000ns) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, VCO2PLL_DLY, vco_to_pll_delay_1000ns) |
-              //S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_10us) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_5us) |
+              //S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_5us) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, DC_REP_RATE, duty_cycle_rep_500us);
     //printf("Register 7 value: 0x%X\r\n", spi_word);
     error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG07, spi_word);
@@ -335,7 +335,7 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
 
     // Register 10: Set hold time in REG10_HOLDTIME  
     //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_5min);
-    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_1_024sec);
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_60_032sec);
     //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_40_05sec);
   //  spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_512msec);
 
