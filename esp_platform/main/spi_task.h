@@ -37,5 +37,7 @@
 extern TaskHandle_t spiTaskHandle;
 void init_cc1101(void);
 void init_bgt60l(void);
+void init_bgt60l2(void);
+
 
 #endif // SPI_TASK_H

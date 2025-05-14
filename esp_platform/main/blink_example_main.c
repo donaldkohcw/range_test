@@ -41,7 +41,7 @@
 #define PAIRING_MODE_THRESHOLD 2000  // Adjust as needed
 #define BLE_CONNECTION_TIMEOUT 30000 // 30 seconds
 #define OTA_TRANSFER_TIMEOUT 300000 // 300 seconds
-#define DEEP_SLEEP_DURATION 120000000 // 1 minutes in microseconds
+#define DEEP_SLEEP_DURATION 60000000 // 1 minutes in microseconds
 
 static uint16_t conn_handle = 0; // Global variable to store the connection handle
 static uint8_t s_led_state = 0;
@@ -482,6 +482,7 @@ static void deep_sleep_task(void *args)
                 break;
             case ESP_SLEEP_WAKEUP_TIMER:
                 //ESP_LOGI(TAG_MAIN, "Wakeup reason: Timer");
+                //init_bgt60l2();
                 // Initialize CC1101, not BGT60L
                 init_cc1101();
                 //ESP_LOGI(TAG_MAIN, "Triggering transmission...");
@@ -499,7 +500,7 @@ static void deep_sleep_task(void *args)
                 ESP_LOGI(TAG_MAIN, "Wakeup reason: GPIO");
                 break;
             case ESP_SLEEP_WAKEUP_UART:
-                ESP_LOGI(TAG_MAIN, "Wakeup reason: UART");
+                //ESP_LOGI(TAG_MAIN, "Wakeup reason: UART");
                 //ESP_LOGI(TAG_MAIN, "Triggering transmission...");
                 xEventGroupSetBits(app_event_group, TRANSMIT_START_BIT);
           
@@ -542,7 +543,7 @@ static void deep_sleep_task(void *args)
         #else
 
         //ESP_LOGI(TAG_MAIN, "Debug mode active, skipping deep sleep...");
-        vTaskDelay(pdMS_TO_TICKS(60000)); // Delay for 60 seconds
+        vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 60 seconds
         //ESP_LOGI(TAG_MAIN, "After delay...");
 
         #endif

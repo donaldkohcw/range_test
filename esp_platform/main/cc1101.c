@@ -767,4 +767,17 @@ esp_err_t cc1101_wake_up(void)
     return ESP_OK;
 }
 
+esp_err_t cc1101_spi_deinit(void)
+{
+    esp_err_t ret = ESP_OK;
+    if (cc1101_spi_handle != NULL) {
+        ret = spi_bus_remove_device(cc1101_spi_handle);
+        if (ret != ESP_OK) {
+            ESP_LOGE("CC1101_SPI", "Failed to remove CC1101 SPI device: %d", ret);
+        }
+        cc1101_spi_handle = NULL;
+    }
+    return ret;
+}
+
 

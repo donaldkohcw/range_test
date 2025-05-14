@@ -217,6 +217,8 @@ esp_err_t cc1101_reset(spi_device_handle_t spi);
 esp_err_t cc1101_transmitData(const uint8_t *data, size_t len);
 esp_err_t cc1101_receiveData(uint8_t *buffer, size_t max_len, size_t *received_len);
 esp_err_t cc1101_wake_up(void);
+esp_err_t cc1101_spi_deinit(void);
+
 
 
 /**

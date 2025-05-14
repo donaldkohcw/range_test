@@ -38,6 +38,35 @@ void init_bgt60l(void)
     //ESP_LOGI(TAG_SPI, "SPI bus freed after BGT60L init");
 }
 
+void init_bgt60l2(void)
+{
+    //bgt60l_spi_deinit();
+   
+    //cc1101_spi_deinit();
+    //ESP_ERROR_CHECK(spi_bus_free(CONFIG_SPI_HOST));
+
+    spi_bus_config_t buscfg_bgt60l = {
+        .miso_io_num = CONFIG_SPI_BGT60L_MISO_GPIO, // Defined in sdkconfig
+        .mosi_io_num = CONFIG_SPI_MOSI_GPIO,
+        .sclk_io_num = CONFIG_SPI_SCLK_GPIO,
+        .quadwp_io_num = -1,
+        .quadhd_io_num = -1,
+        .max_transfer_sz = 4096,
+    };
+
+    ESP_ERROR_CHECK(spi_bus_initialize(CONFIG_SPI_HOST, &buscfg_bgt60l, SPI_DMA_CH_AUTO));
+    //ESP_LOGI(TAG_SPI, "SPI bus initialized for BGT60L");
+
+    ESP_ERROR_CHECK(bgt60l_spi_init());
+    ESP_ERROR_CHECK(mtb_s2go_radar_bgt60ltr11_pulsed_mode_init2());
+    //ESP_LOGI(TAG_SPI, "BGT60L pulsed mode initialized successfully");
+
+    // Deinitialize the BGT60L SPI devices
+    ESP_ERROR_CHECK(bgt60l_spi_deinit());
+    ESP_ERROR_CHECK(spi_bus_free(CONFIG_SPI_HOST));
+    //ESP_LOGI(TAG_SPI, "SPI bus freed after BGT60L init");
+}
+
 // Function to initialize CC1101 device over SPI
 void init_cc1101(void)
 {
@@ -76,7 +105,4 @@ void spi_task(void *pvParameters)
     vTaskDelete(NULL);
 }
 
-void init_spi_task(void)
-{
-   xTaskCreate(spi_task, "spi_task", SPI_TASK_STACK_SIZE, NULL, SPI_TASK_PRIORITY, &spiTaskHandle);
-}
+

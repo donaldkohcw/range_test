@@ -479,7 +479,7 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_PGA_gain(Reg09_baseband_ctrl_t PGA_gain);
  * @return ESP_OK on success, or an error code on failure.
  */
 esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void);
-
+esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init2(void);
 /**
  * @brief Enable soft reset for the BGT60LTR11 device.
  *

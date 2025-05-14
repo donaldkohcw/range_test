@@ -246,7 +246,7 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
     spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_on) |
               S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_on) |
               S2GO_RADAR_BGT60LTR11_SET(REG02, DIR_MODE, dir_mode_2) |
-              S2GO_RADAR_BGT60LTR11_SET(REG02, THRS, det_thrs_80);
+              S2GO_RADAR_BGT60LTR11_SET(REG02, THRS, det_thrs_112);
     
             //   spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_on) |
             //   S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_on) |
@@ -284,7 +284,8 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
 
     // Register 5: Set frequency in REG05_PLL_CFG2
     //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_25Ghz);
-    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_1Ghz);
+    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_1Ghz);
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_4Ghz);
 
     //printf("Register 5 value: 0x%X\r\n", spi_word);
     error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG05_PLL_CFG2, spi_word);
@@ -305,8 +306,8 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
               S2GO_RADAR_BGT60LTR11_SET(REG07, PD_EN, pd_off) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, MPA2SH_DLY, map_enable_to_sample_hold_delay_1000ns) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, VCO2PLL_DLY, vco_to_pll_delay_1000ns) |
+              //S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_40us) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_5us) |
-              //S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_5us) |
               S2GO_RADAR_BGT60LTR11_SET(REG07, DC_REP_RATE, duty_cycle_rep_500us);
     //printf("Register 7 value: 0x%X\r\n", spi_word);
     error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG07, spi_word);
@@ -334,9 +335,9 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
     vTaskDelay(pdMS_TO_TICKS(1));
 
     // Register 10: Set hold time in REG10_HOLDTIME  
-    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_5min);
-    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_60_032sec);
-    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_40_05sec);
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_1_024sec);
+    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_60_032sec);
+    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_1_024sec);
   //  spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_512msec);
 
     //printf("Register 10 value: 0x%X\r\n", spi_word);
@@ -352,9 +353,9 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
     vTaskDelay(pdMS_TO_TICKS(1));
 
     // Register 13: Clear REG13_ALGO1
-    // spi_word = S2GO_RADAR_BGT60LTR11_SET(REG13_ALGO1, CLEAR_ALL, 0);
-    // printf("Register 13 value: 0x%X\r\n", spi_word);
-    // error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG13_ALGO1, 0x0000);
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG13_ALGO1, CLEAR_ALL, 0);
+    printf("Register 13 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG13_ALGO1, 0x0000);
     
     // Set Register 13 (ALGO1) with the prt_mult field set to prt_mult_3D
     spi_word = S2GO_RADAR_BGT60LTR11_SET(REG13_ALGO1, PRT_MULT,prt_mult_3D);
@@ -432,6 +433,227 @@ esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init(void)
 
     return ESP_OK;
 }
+
+esp_err_t mtb_s2go_radar_bgt60ltr11_pulsed_mode_init2(void)
+{
+    uint16_t spi_word;
+    esp_err_t error;
+
+    uint16_t reg56;
+    uint16_t reg0=0;
+
+    // (Optionally) Enable soft reset (assumes a similar no-obj version exists)
+      error = mtb_s2go_radar_bgt60ltr11_enable_soft_reset();
+    if(error != ESP_OK) {
+        return error;
+    }
+
+    // Register 0: Clear all settings in REG00
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG00, CLEAR_ALL, 0);
+    //printf("Register 0 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG00, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 1: Clear all settings in REG01
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG01, CLEAR_ALL, 0);
+    //printf("Register 1 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG01, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 2: Set HPRT, APRT, DIR_MODE and THRS fields in REG02
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_on) |
+              S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_on) |
+              S2GO_RADAR_BGT60LTR11_SET(REG02, DIR_MODE, dir_mode_2) |
+              S2GO_RADAR_BGT60LTR11_SET(REG02, THRS, det_thrs_2560);
+    
+            //   spi_word = S2GO_RADAR_BGT60LTR11_SET(REG02, HPRT, hprt_on) |
+            //   S2GO_RADAR_BGT60LTR11_SET(REG02, APRT, aprt_on) |
+            //   S2GO_RADAR_BGT60LTR11_SET(REG02, DIR_MODE, dir_mode_2) |
+            //   S2GO_RADAR_BGT60LTR11_SET(REG02, THRS, det_thrs_2560);              
+    //printf("Register 2 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG02, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 3: Reserved field in REG03
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG03, RESERVED, 0);
+    //printf("Register 3 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG03, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 4: Configure REG04_PLL_CFG1 with multiple fields
+    spi_word =
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, PFD_RDT_SEL, pfd_rst_dly_375ps) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, CP_MODE, bias_regulation_loop_active) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, CP_ICP_SEL, charge_pump_current_55uA) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, FBDIV_CNT, feedback_divider_counter_21dec) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, XOSC_MODE, xosc_mode_amplitude_1) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, LF_R2_SEL, loopfilter_R2_18_7Kohm) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, CL_LOOP_PMODE, closed_loop_pusled_mode) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, LF_R4_SEL, loopfilter_R4_0_1Kohm) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, LF_ISO, loopfilter_isolation_with_switches_only) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, BIAS_DIS, biassing_on) |
+       S2GO_RADAR_BGT60LTR11_SET(REG04_PLL_CFG1, DFT_DMUX, mux_functional_mode);
+    //printf("Register 4 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG04_PLL_CFG1, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 5: Set frequency in REG05_PLL_CFG2
+    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_25Ghz);
+    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_1Ghz);
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG05_PLL_CFG2, FCW, frequency_61_4Ghz);
+
+    //printf("Register 5 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG05_PLL_CFG2, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 6: Configure lock detection in REG06_PLL_CFG3
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG06_PLL_CFG3, LD_EN, lock_detection_on) |
+              S2GO_RADAR_BGT60LTR11_SET(REG06_PLL_CFG3, LD_LEN, lock_detection_24_clock) |
+              S2GO_RADAR_BGT60LTR11_SET(REG06_PLL_CFG3, LD_TW_SEL, lock_detection_time_window_1_5ns);
+    //printf("Register 6 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG06_PLL_CFG3, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 7: Configure REG07 with multiple fields
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG07, MPA_CTRL, mpa_4_5dBm) |
+              S2GO_RADAR_BGT60LTR11_SET(REG07, PD_EN, pd_off) |
+              S2GO_RADAR_BGT60LTR11_SET(REG07, MPA2SH_DLY, map_enable_to_sample_hold_delay_1000ns) |
+              S2GO_RADAR_BGT60LTR11_SET(REG07, VCO2PLL_DLY, vco_to_pll_delay_1000ns) |
+              //S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_40us) |
+              S2GO_RADAR_BGT60LTR11_SET(REG07, DC_ON_PULSE_LEN, duty_cycle_on_pulse_5us) |
+              S2GO_RADAR_BGT60LTR11_SET(REG07, DC_REP_RATE, duty_cycle_rep_500us);
+    //printf("Register 7 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG07, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 8: Configure REG08_DIV
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG08_DIV, OUT_EN, 1) |
+              S2GO_RADAR_BGT60LTR11_SET(REG08_DIV, SEL, divider_select_2_power_20);
+    //printf("Register 8 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG08_DIV, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 9: Configure REG09_BB - PGA gain, LPF, clock chop, and HP filter
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG09_BB, CTRL_GAIN, baseband_PGA_gain_50dB) |
+              S2GO_RADAR_BGT60LTR11_SET(REG09_BB, LPF_BW, low_pass_filter_10kHz) |
+              S2GO_RADAR_BGT60LTR11_SET(REG09_BB, CLK_CHOP_SEL, clock_chop_freq_200kHz) |
+              //S2GO_RADAR_BGT60LTR11_SET(REG09_BB, HP_RES, high_pass_filter_resistor_1Mohm);
+              S2GO_RADAR_BGT60LTR11_SET(REG09_BB, HP_RES, high_pass_filter_resistor_4Mohm);
+
+    //printf("Register 9 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG09_BB, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 10: Set hold time in REG10_HOLDTIME  
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_1_024sec);
+    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_60_032sec);
+    //spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_1_024sec);
+  //  spi_word = S2GO_RADAR_BGT60LTR11_SET(REG10_HOLDTIME, HOLD, hold_time_512msec);
+
+    //printf("Register 10 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG10_HOLDTIME, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 12: Clear REG12
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG12, CLEAR_ALL, 0);
+    //printf("Register 12 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG12, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 13: Clear REG13_ALGO1
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG13_ALGO1, CLEAR_ALL, 0);
+    printf("Register 13 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG13_ALGO1, 0x0000);
+    
+    // Set Register 13 (ALGO1) with the prt_mult field set to prt_mult_3D
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG13_ALGO1, PRT_MULT,prt_mult_3D);
+    //printf("Register 13 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG13_ALGO1, spi_word);
+
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 14: Clear REG14_ALGO2
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG14_ALGO2, CLEAR_ALL, 0);
+    //printf("Register 14 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG14_ALGO2, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 15: Set START_PM inactive in REG15_DIGCTRL first
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG15_DIGCTRL, START_PM, start_pm_inactive);
+    //printf("Register 15 value (start_pm inactive): 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG15_DIGCTRL, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 34: Clear REG34_ADC0
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG34_ADC0, CLEAR_ALL, 0);
+    //printf("Register 34 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG34_ADC0, 0x0000);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 35: Clear REG35_ADC1
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG35_ADC1, CLEAR_ALL, 0);
+    //printf("Register 35 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG35_ADC1, 0x0000);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+    // Register 36: Clear REG36_ADC_STAT
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG36_ADC_STAT, CLEAR_ALL, 0);
+    //printf("Register 36 value: 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG36_ADC_STAT, 0x0000);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+
+
+    // Register 15 again: Set START_PM active in REG15_DIGCTRL
+    spi_word = S2GO_RADAR_BGT60LTR11_SET(REG15_DIGCTRL, START_PM, start_pm_active);
+    //printf("Register 15 value (start_pm active): 0x%X\r\n", spi_word);
+    error = bgt60l_write(S2GO_RADAR_BGT60LTR11_REG_REG15_DIGCTRL, spi_word);
+    if(error != ESP_OK) return error;
+    vTaskDelay(pdMS_TO_TICKS(1));
+
+
+    // Record the start time (in microseconds)
+    uint64_t start_time = esp_timer_get_time();
+    // Loop to confirm soft reset is complete
+    for (volatile unsigned short i = 0; i < 2048; i++)
+    {
+        error = bgt60l_read(0x38, &reg56);
+        if(error != ESP_OK){
+            return error;
+        }
+        
+        // Check if register 0 is 0 and bit 13 of reg56 is set
+        if((reg0 == 0) && (reg56 & (1 << 13)))
+        {
+            break;
+        }
+    }
+
+    // Record the end time and calculate elapsed time
+    uint64_t elapsed_us = esp_timer_get_time() - start_time;
+    //ESP_LOGI(TAG_BGT60LTR_SPI, "Total wait time: %llu microseconds (%.3f seconds)", elapsed_us, elapsed_us / 1000000.0);
+
+    return ESP_OK;
+}
+
 
 esp_err_t mtb_s2go_radar_bgt60ltr11_enable_soft_reset(void)
 {
